@@ -1,0 +1,4 @@
+#pragma once
+// the configured options and settings for Tutorial
+#define VERSION_MAJOR @TodoApp_VERSION_MAJOR@
+#define VERSION_MINOR @TodoApp_VERSION_MINOR@
