@@ -1,5 +1,8 @@
 #include "TaskManager.h"
 
+#include <print>
+#include <magic_enum/magic_enum.hpp>
+
 #include "gtest/gtest.h"
 
 TEST(Task, should_be_uncompleted_at_initialization) {
@@ -42,7 +45,7 @@ TEST(TaskManager, should_assign_id_to_saved_task) {
 
     const Task task("test");
     const Task saved_task = task_manager.save(task);
-    
+
     ASSERT_NE(unsaved_id, saved_task.id);
 }
 
@@ -88,7 +91,7 @@ TEST(TaskManager, should_remove_task) {
     ASSERT_TRUE(task_manager.remove(saved_task.id));
 
     ASSERT_FALSE(task_manager.find_by_id(saved_task.id));
-    
+
     ASSERT_FALSE(task_manager.remove(9999));
 }
 
@@ -110,4 +113,48 @@ TEST(TaskManager, should_toggle_complete_task) {
     const auto uncompleted_task = task_manager.toggle_complete(completed_task->id);
     ASSERT_TRUE(uncompleted_task);
     ASSERT_FALSE(uncompleted_task->completed);
+}
+
+TEST(TaskManager, should_emplace_task) {
+    TaskManager task_manager;
+
+    std::string title = "Task 1";
+    const Task created_task = task_manager.save(title);
+    ASSERT_EQ(title, created_task.title);
+}
+
+TEST(TaskManager, should_emit_change_event_to_subscriber) {
+    TaskManager task_manager;
+
+    int counter[magic_enum::enum_count<TaskManagerChangeEventType>()] = {};
+    std::string title = "test";
+    constexpr auto names = magic_enum::enum_names<TaskManagerChangeEventType>();
+    task_manager.subscribe_to_changes([&](const TaskManagerChangeEvent& event) {
+        std::println("Event of type: {} received for task '{}'",
+                    names[event.type] , event.task.title);
+        ASSERT_EQ(title, event.task.title);
+        counter[event.type]++;
+    });
+
+    Task created_task = task_manager.save(title);
+    title = created_task.title = "new title";
+    const Task updated_task = task_manager.save(created_task);
+    task_manager.remove(updated_task.id);
+    task_manager.save(title = "Another title");
+
+    ASSERT_EQ(2, counter[Create]);
+    ASSERT_EQ(1, counter[Update]);
+    ASSERT_EQ(1, counter[Remove]);
+}
+
+TEST(TaskManager, should_emit_remove_event_after_removal) {
+    TaskManager task_manager;
+
+    task_manager.save("Task 1");
+    const Task to_delete = task_manager.save("Task 2");
+    task_manager.subscribe_to_changes([&](const TaskManagerChangeEvent& event) {
+        ASSERT_EQ(1, task_manager.find_all().size());
+    });
+
+    task_manager.remove(to_delete.id);
 }

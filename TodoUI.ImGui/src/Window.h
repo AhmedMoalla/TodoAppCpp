@@ -8,10 +8,15 @@
 #include <functional>
 #include <imgui.h>
 
-struct WindowSpecification {
+struct WindowDimensions {
     int width;
     int height;
-    const char *title;
+};
+
+struct WindowSpecification {
+    WindowDimensions dimensions;
+    const char* title;
+    const bool resizable;
 };
 
 typedef std::function<void()> KeyCallback;
@@ -48,17 +53,21 @@ public:
         if (!glfwInit())
             throw std::runtime_error("Failed to initialize GLFW");
 
-        glsl_version = configure_window();
+        glsl_version = configure_window(spec.resizable);
 
-        handle = glfwCreateWindow(spec.width, spec.height, spec.title, nullptr, nullptr);
+        handle = glfwCreateWindow(spec.dimensions.width, spec.dimensions.height, spec.title, nullptr, nullptr);
         if (handle == nullptr)
             throw std::runtime_error("Failed to create GLFW window");
 
-        // Hack
+        // Hack to pass lambda to glfwSetKeyCallback without capture group
         glfwSetWindowUserPointer(handle, this);
-        glfwSetKeyCallback(handle, [](GLFWwindow *window, const int key, const int, const int action, const int mods) {
+        glfwSetKeyCallback(handle, [](GLFWwindow* window, const int key, const int _, const int action, const int mods) {
             const auto self = static_cast<Window *>(glfwGetWindowUserPointer(window));
             self->key_callback(key, action, mods);
+        });
+
+        glfwSetFramebufferSizeCallback(handle, [](GLFWwindow* _, const int width, const int height) {
+            glViewport(0, 0, width, height);
         });
 
         glfwMakeContextCurrent(handle);
@@ -72,30 +81,27 @@ public:
 
     ~Window();
 
+    void close() const;
     [[nodiscard]] bool should_close() const;
-
     [[nodiscard]] bool poll_events() const;
-
     void begin_imgui_frame() const;
-
     void end_imgui_frame() const;
-
     [[nodiscard]] float get_frame_rate() const;
-
-    void add_key_callback(int key, int mods, int action, const KeyCallback &callback);
-
-    void add_key_callback(int key, int action, const KeyCallback &callback);
+    void add_key_callback(int key, int mods, int action, const KeyCallback& callback);
+    void add_key_callback(int key, int action, const KeyCallback& callback);
+    WindowDimensions get_dimensions() const {
+        WindowDimensions dimensions;
+        glfwGetFramebufferSize(handle, &dimensions.width, &dimensions.height);
+        return dimensions;
+    }
 
 private:
-    GLFWwindow *handle;
-    const char *glsl_version;
+    GLFWwindow* handle;
+    const char* glsl_version;
     std::vector<KeyCallbackMapping> callbacks;
 
-    static const char *configure_window();
-
+    const char* configure_window(bool resizable);
     void configure_imgui() const;
-
     void set_window_icon() const;
-
     void key_callback(int key, int action, int mods) const;
 };

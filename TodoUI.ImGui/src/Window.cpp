@@ -16,6 +16,10 @@ Window::~Window() {
     glfwTerminate();
 }
 
+void Window::close() const {
+    glfwSetWindowShouldClose(handle, true);
+}
+
 bool Window::should_close() const {
     return glfwWindowShouldClose(handle);
 }
@@ -68,7 +72,9 @@ float Window::get_frame_rate() const {
     return ImGui::GetIO().Framerate;
 }
 
-const char* Window::configure_window() {
+const char* Window::configure_window(const bool resizable) {
+
+    glfwWindowHint(GLFW_RESIZABLE, resizable);
     // Decide GL+GLSL versions
 #if defined(IMGUI_IMPL_OPENGL_ES2)
     // GL ES 2.0 + GLSL 100
