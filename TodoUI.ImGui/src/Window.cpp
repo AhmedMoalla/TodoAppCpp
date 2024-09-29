@@ -130,7 +130,7 @@ void Window::set_window_icon() const {
     const auto pixels = stbi_load_from_memory(checkmark_icon_png, checkmark_icon_png_len, &width, &height, &channels,
                                               4);
     if (!pixels) {
-        std::println(std::cerr, "Failed to load icon");
+        std::println(stderr, "Failed to load icon");
         return;
     }
 
@@ -153,7 +153,7 @@ void Window::add_key_callback(int key, int action, const KeyCallback& callback) 
 }
 
 void Window::key_callback(const int key, const int action, const int mods) const {
-    for (auto callback : callbacks) {
+    for (const auto& callback : callbacks) {
         if (callback.action == action && callback.key == key && callback.mods == mods) {
             callback();
         }

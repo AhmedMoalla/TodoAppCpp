@@ -43,8 +43,10 @@ add_library(imgui
         ${imgui_external_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
 )
 
+target_compile_definitions(imgui INTERFACE GL_SILENCE_DEPRECATION)
+
 # Link with OpenGL and glfw
-target_link_libraries(imgui PRIVATE glfw OpenGL::GL)
+target_link_libraries(imgui PRIVATE TodoAppCompilerFlags glfw OpenGL::GL)
 
 # Include dirs
 target_include_directories(imgui
