@@ -4,6 +4,7 @@
 #include "misc/cpp/imgui_stdlib.h"
 #include "Window.h"
 #include <print>
+#include <magic_enum/magic_enum.hpp>
 
 namespace todo_widgets {
     static void menu_bar(const todo_imgui::Window& window) {
@@ -77,6 +78,10 @@ namespace todo_widgets {
             draw_list->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 255, 255, 20));
         }
 
+        if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+            std::println("Clicked: {}", text);
+        }
+
         return {checkbox_pressed, delete_pressed};
     }
 
@@ -135,8 +140,11 @@ namespace todo_widgets {
         const float button_width = ImGui::CalcTextSize(button_label.data()).x + (frame_padding.x * 2);
         const float input_width = availableWidth - button_width - window_padding.x;
 
+        // When you click on create it should focus the input
+        // When input is focused pressing enter should trigger the button
         ImGui::PushItemWidth(input_width); // https://github.com/ocornut/imgui/issues/3714#issuecomment-758952794
         ImGui::InputTextWithHint("##Task Name", "<press Enter to create a task>", content);
+        ImGui::SetNextItemShortcut(ImGuiKey_Enter, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_Repeat);
         ImGui::PopItemWidth();
         ImGui::SameLine();
         if (ImGui::Button(button_label.data())) {
