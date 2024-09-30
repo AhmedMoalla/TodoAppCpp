@@ -1,11 +1,12 @@
 #pragma once
 
 #include "imgui.h"
+#include "misc/cpp/imgui_stdlib.h"
 #include "Window.h"
 #include <print>
 
-namespace widgets {
-    static void menu_bar(const Window& window) {
+namespace todo_widgets {
+    static void menu_bar(const todo_imgui::Window& window) {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 ImGui::Separator();
@@ -18,7 +19,7 @@ namespace widgets {
         }
     }
 
-    static void debug_overlay(const Window& window) {
+    static void debug_overlay(const todo_imgui::Window& window) {
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking |
                                         ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings |
                                         ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav |
@@ -88,8 +89,7 @@ namespace widgets {
         ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
         bool ok_pressed = false;
-        if (ImGui::BeginPopupModal(popup_id.data(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
+        if (ImGui::BeginPopupModal(popup_id.data(), nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
             ImGui::Text(text.data());
             ImGui::Separator();
 
@@ -113,19 +113,18 @@ namespace widgets {
         return ok_pressed;
     }
 
-    static bool delete_confirm_popup(const bool open, const Task& task) {
+    static bool delete_confirm_popup(const bool open, const todo::Task& task) {
         const std::string popup_id = std::format("Delete?##{}", std::to_string(task.id));
         if (open) {
             set_popup_open(popup_id);
         }
 
         constexpr std::string_view message = "Are you sure you want to delete task '{}' ?"
-                                             "\nThis operation cannot be undone!";
+                "\nThis operation cannot be undone!";
         return popup(popup_id, std::format(message, task.title));
     }
 
-    static bool creation_input(char* content) {
-
+    static bool creation_input(std::string* content) {
         bool create_pressed = false;
         ImGui::BeginGroup();
 
@@ -136,8 +135,8 @@ namespace widgets {
         const float button_width = ImGui::CalcTextSize(button_label.data()).x + (frame_padding.x * 2);
         const float input_width = availableWidth - button_width - window_padding.x;
 
-        ImGui::PushItemWidth(input_width);
-        ImGui::InputTextWithHint("##Task Name", "<press Enter to create a task>", content, IM_ARRAYSIZE(content));
+        ImGui::PushItemWidth(input_width); // https://github.com/ocornut/imgui/issues/3714#issuecomment-758952794
+        ImGui::InputTextWithHint("##Task Name", "<press Enter to create a task>", content);
         ImGui::PopItemWidth();
         ImGui::SameLine();
         if (ImGui::Button(button_label.data())) {

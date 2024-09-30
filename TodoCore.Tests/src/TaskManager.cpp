@@ -5,6 +5,8 @@
 
 #include "gtest/gtest.h"
 
+using namespace todo;
+
 TEST(Task, should_be_uncompleted_at_initialization) {
     const Task task("title");
     ASSERT_FALSE(task.completed);

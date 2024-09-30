@@ -41,6 +41,7 @@ add_library(imgui
         ${imgui_external_SOURCE_DIR}/imgui_demo.cpp # TODO: Remove => only for testing purposes. Disable by defining IMGUI_DISABLE_DEMO_WINDOWS. Maybe only include this on Debug builds.
         ${imgui_external_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
         ${imgui_external_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+        ${imgui_external_SOURCE_DIR}/misc/cpp/imgui_stdlib.cpp
 )
 
 target_compile_definitions(imgui INTERFACE GL_SILENCE_DEPRECATION)

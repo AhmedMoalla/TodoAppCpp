@@ -6,6 +6,9 @@
 #include <Window.h>
 #include <magic_enum/magic_enum.hpp>
 
+using namespace todo;
+using namespace todo_imgui;
+
 void display_ui(const TaskManager& task_manager) {
     constexpr WindowDimensions dimensions = {.width = 350, .height = 550};
     constexpr WindowSpecification spec = {.dimensions = dimensions, .title = "TodoApp", .resizable = false};
@@ -47,19 +50,18 @@ void ImGuiTodoUI::render_ui() {
     }
 
     for (auto& task: state.tasks) {
-        const auto [checkbox_pressed, delete_pressed] = widgets::task_checkbox(task.id, task.title, task.completed);
+        const auto [checkbox_pressed, delete_pressed] = todo_widgets::task_checkbox(task.id, task.title, task.completed);
         if (checkbox_pressed) {
             task_manager.toggle_complete(task.id);
         }
 
-        if (widgets::delete_confirm_popup(delete_pressed, task)) {
+        if (todo_widgets::delete_confirm_popup(delete_pressed, task)) {
             task_manager.remove(task.id);
         }
     }
 
-    char task_title[100] = {};
-    if (widgets::creation_input(task_title)) {
-        std::println("Create a new task {}", task_title);
-        // task_manager.save(task_title);
+    if (todo_widgets::creation_input(&state.create_task_title) && !state.create_task_title.empty()) {
+        task_manager.save(state.create_task_title);
+        state.create_task_title.clear();
     }
 }

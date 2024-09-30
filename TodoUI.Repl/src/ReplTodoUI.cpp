@@ -3,6 +3,9 @@
 #include <format>
 #include <iostream>
 
+using namespace todo;
+using namespace todo_repl;
+
 void display_ui(const TaskManager& task_manager) {
     ReplTodoUI ui(task_manager);
     ui.run();

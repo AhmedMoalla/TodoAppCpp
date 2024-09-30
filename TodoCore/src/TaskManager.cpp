@@ -2,6 +2,8 @@
 
 #include "TaskManager.h"
 
+using namespace todo;
+
 Task TaskManager::save(Task task) {
     if (const auto found = tasks.find(task.id); found != tasks.end()) {
         found->second = task;

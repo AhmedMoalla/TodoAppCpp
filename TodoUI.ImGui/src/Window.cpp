@@ -6,6 +6,8 @@
 #include "Window.h"
 #include "checkmark_icon.h"
 
+using namespace todo_imgui;
+
 Window::~Window() {
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();

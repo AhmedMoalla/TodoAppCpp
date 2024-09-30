@@ -2,12 +2,13 @@
 #include "TaskManager.h"
 #include "utils.h"
 
+namespace todo_repl {
 enum CommandType : std::uint8_t {
     Help, Exit, List, Complete, Remove, Create, Update, Unknown = std::numeric_limits<uint8_t>::max()
 };
 
 static CommandType parse_command_type(const std::string_view command) {
-    const auto trimmed = string_trim(command);
+    const auto trimmed = todo_utils::string_trim(command);
     if (trimmed == "help") return Help;
     if (trimmed == "exit") return Exit;
     if (trimmed == "list") return List;
@@ -27,7 +28,7 @@ struct Command {
     Command() : type(Unknown) {}
 
     explicit Command(std::string command) : raw_command(std::move(command)) {
-        split_command = string_split(raw_command, ' ', true);
+        split_command = todo_utils::string_split(raw_command, ' ', true);
         type = parse_command_type(split_command[0]);
         args = std::vector(split_command.begin() + 1, split_command.end());
     }
@@ -35,12 +36,12 @@ struct Command {
 
 class ReplTodoUI {
 public:
-    explicit ReplTodoUI(TaskManager task_manager) : task_manager(std::move(task_manager)) {}
+    explicit ReplTodoUI(todo::TaskManager task_manager) : task_manager(std::move(task_manager)) {}
 
     void run();
 
 private:
-    TaskManager task_manager;
+    todo::TaskManager task_manager;
 
     void list_tasks() const;
     void create_task(const std::vector<std::string_view>& args);
@@ -48,3 +49,4 @@ private:
     void complete_task(const std::vector<std::string_view>& args);
     void remove_task(const std::vector<std::string_view>& args);
 };
+}
