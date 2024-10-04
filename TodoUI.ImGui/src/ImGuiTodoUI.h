@@ -10,10 +10,17 @@
 #endif
 
 namespace todo_imgui {
+
+    struct UITaskState : todo::Task {
+        bool edit_mode = false;
+        UITaskState(const Task& task): Task(task) {}
+    };
+
     struct UIState {
         bool show_demo_window = false;
-        std::vector<todo::Task> tasks;
+        std::vector<UITaskState> tasks;
         std::string create_task_title;
+        std::string edit_task_title;
     };
 
     class ImGuiTodoUI {

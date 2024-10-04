@@ -22,13 +22,13 @@ void ImGuiTodoUI::init() {
     task_manager.subscribe_to_changes([&](const TaskManagerChangeEvent& event) {
         std::println("Event of type '{}' was received for task '{}'", event_names[event.type], event.task.title);
         switch (event.type) {
-            case Create: state.tasks.push_back(event.task);
+            case Create: state.tasks.emplace_back(event.task);
                 break;
             case Update:
             case Remove: {
                 state.tasks.clear();
                 for (auto task: task_manager.find_all()) {
-                    state.tasks.push_back(task);
+                    state.tasks.emplace_back(task);
                 }
                 break;
             }
@@ -50,12 +50,39 @@ void ImGuiTodoUI::render_ui() {
     }
 
     for (auto& task: state.tasks) {
-        const auto [checkbox_pressed, delete_pressed] = todo_widgets::task_checkbox(task.id, task.title, task.completed);
+        const auto [checkbox_pressed, x_pressed, save_pressed, edit_mode_entered] =
+            todo_widgets::task_checkbox(task.id, task.title, task.completed, task.edit_mode, &state.edit_task_title);
+
+        if (edit_mode_entered) {
+            state.edit_task_title = task.title;
+        }
+
+        // Only one task can be in edit mode
+        if (task.edit_mode) {
+            if (x_pressed) {
+                task.edit_mode = false;
+                state.edit_task_title = "";
+                continue;
+            }
+
+            if (save_pressed && !state.edit_task_title.empty()) {
+                task.title = state.edit_task_title;
+                task_manager.save(static_cast<Task>(task));
+                task.edit_mode = false;
+                state.edit_task_title = "";
+            }
+
+            for (auto& other_task: state.tasks) {
+                if (task == other_task) continue;
+                other_task.edit_mode = false;
+            }
+        }
+
         if (checkbox_pressed) {
             task_manager.toggle_complete(task.id);
         }
 
-        if (todo_widgets::delete_confirm_popup(delete_pressed, task)) {
+        if (todo_widgets::delete_confirm_popup(x_pressed, task)) {
             task_manager.remove(task.id);
         }
     }

@@ -15,6 +15,11 @@ namespace todo {
 
         explicit Task(std::string title): title(std::move(title)) {}
 
+        Task(const Task& other)
+            : id(other.id),
+              title(other.title),
+              completed(other.completed) {}
+
         auto operator<=>(const Task&) const = default;
     };
 

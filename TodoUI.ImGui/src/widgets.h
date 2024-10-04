@@ -5,6 +5,7 @@
 #include "Window.h"
 #include <print>
 #include <magic_enum/magic_enum.hpp>
+#include <string_view>
 
 namespace todo_widgets {
     static void menu_bar(const todo_imgui::Window& window) {
@@ -48,29 +49,73 @@ namespace todo_widgets {
         ImGui::End();
     }
 
+    static bool transparent_button(const char* text, const float width, const float height = 0) {
+        // Set the button style to have no background, border, or hover effect
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0)); // Transparent background
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0)); // No hover effect
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));  // No active effect
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0); // No border
+        // Add other alignment if needed
+        ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0,0.5f)); // Left Align
+
+        ImGui::Button(text, ImVec2(width, height));
+
+        // Restore original style settings
+        ImGui::PopStyleColor(3);
+        ImGui::PopStyleVar(2);
+        return ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+    }
+
     struct TaskCheckboxResult {
-        bool checkbox_pressed;
-        bool delete_pressed;
+        bool checkbox_pressed = false;
+        bool x_pressed = false;
+        bool save_pressed = false;
+        bool edit_mode_entered = false; // True for one frame after edit mode is enabled
     };
 
-    static TaskCheckboxResult task_checkbox(const int id, const std::string_view text, bool completed) {
+    static TaskCheckboxResult task_checkbox(const int id, const std::string_view text, bool completed, bool& edit_mode, std::string* edit_text) {
+        TaskCheckboxResult result;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0.f, 0.f));
+
         ImGui::BeginGroup();
-        const auto str_id = "##" + std::to_string(id);
+        {
+            ImGui::PopStyleVar();
 
-        const bool checkbox_pressed = ImGui::Checkbox(str_id.c_str(), &completed);
+            const auto str_id = "##" + std::to_string(id);
+            result.checkbox_pressed = ImGui::Checkbox((str_id + "Checkbox").c_str(), &completed);
 
-        const float availableWidth = ImGui::GetContentRegionAvail().x;
-        const auto text_size = ImGui::CalcTextSize(text.data());
-        auto window_padding = ImGui::GetStyle().WindowPadding;
+            const float available_width = ImGui::GetContentRegionAvail().x;
+            const auto frame_padding = ImGui::GetStyle().FramePadding;
+            const auto item_spacing = ImGui::GetStyle().ItemSpacing;
+            const auto checkbox_width = ImGui::GetItemRectSize().x;
+            constexpr auto x_button_text = "x";
+            const auto x_button_width = ImGui::CalcTextSize(x_button_text).x + (frame_padding.x * 2);
 
-        ImGui::SameLine(0, window_padding.x);
-        ImGui::Text(text.data());
-        bool delete_pressed = false;
-        constexpr auto button_width = 15;
-        constexpr auto checkbox_size = 19;
-        ImGui::SameLine(0, availableWidth - text_size.x - checkbox_size - button_width - window_padding.x);
-        delete_pressed = ImGui::Button(("x" + str_id).c_str());
-        ImGui::EndGroup();
+            if (!edit_mode) {
+                ImGui::SameLine(0, 0);
+                const auto text_width = available_width - checkbox_width - x_button_width;
+                edit_mode = transparent_button((text.data() + str_id).c_str(), text_width);
+                if (edit_mode) {
+                    result.edit_mode_entered = true;
+                }
+                ImGui::SameLine(0, 0);
+                result.x_pressed = ImGui::Button((x_button_text + str_id).c_str());
+            } else {
+                ImGui::SameLine();
+                constexpr auto save_button_text = "save";
+                const auto save_button_width = ImGui::CalcTextSize(save_button_text).x + (frame_padding.x * 2);
+                const auto input_width = available_width - checkbox_width - (item_spacing.x * 3) - save_button_width - x_button_width;
+                ImGui::PushItemWidth(input_width);
+                ImGui::InputTextWithHint((str_id + text.data()).c_str(), "Task title", edit_text);
+                ImGui::PopItemWidth();
+                ImGui::SameLine();
+                result.save_pressed = ImGui::Button((save_button_text + str_id).c_str()); ImGui::SameLine();
+                result.x_pressed = ImGui::Button((x_button_text + str_id).c_str());
+            }
+
+            ImGui::EndGroup();
+        }
 
         if (ImGui::IsItemHovered()) {
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -78,11 +123,7 @@ namespace todo_widgets {
             draw_list->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 255, 255, 20));
         }
 
-        if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-            std::println("Clicked: {}", text);
-        }
-
-        return {checkbox_pressed, delete_pressed};
+        return result;
     }
 
     static void set_popup_open(const std::string_view popup_id) {
@@ -130,7 +171,6 @@ namespace todo_widgets {
     }
 
     static bool creation_input(std::string* content) {
-        bool create_pressed = false;
         ImGui::BeginGroup();
 
         constexpr std::string_view button_label = "Create";
@@ -147,9 +187,8 @@ namespace todo_widgets {
         ImGui::SetNextItemShortcut(ImGuiKey_Enter, ImGuiInputFlags_RouteGlobal | ImGuiInputFlags_Repeat);
         ImGui::PopItemWidth();
         ImGui::SameLine();
-        if (ImGui::Button(button_label.data())) {
-            create_pressed = true;
-        }
+
+        const bool create_pressed = ImGui::Button(button_label.data());
 
         ImGui::EndGroup();
         return create_pressed;
