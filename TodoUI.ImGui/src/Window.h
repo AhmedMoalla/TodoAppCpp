@@ -54,7 +54,7 @@ namespace todo_imgui {
             if (!glfwInit())
                 throw std::runtime_error("Failed to initialize GLFW");
 
-            glsl_version = configure_window(spec.resizable);
+            const auto glsl_version = configure_window(spec.resizable);
 
             handle = glfwCreateWindow(spec.dimensions.width, spec.dimensions.height, spec.title, nullptr, nullptr);
             if (handle == nullptr)
@@ -62,22 +62,21 @@ namespace todo_imgui {
 
             // Hack to pass lambda to glfwSetKeyCallback without capture group
             glfwSetWindowUserPointer(handle, this);
-            glfwSetKeyCallback(handle, [](GLFWwindow* window, const int key, const int _, const int action, const int mods) {
+            glfwSetKeyCallback(handle, [](GLFWwindow* window, const int key, [[maybe_unused]] const int scancode, const int action, const int mods) {
                 const auto self = static_cast<Window *>(glfwGetWindowUserPointer(window));
                 self->key_callback(key, action, mods);
             });
 
-            glfwSetFramebufferSizeCallback(handle, [](GLFWwindow* _, const int width, const int height) {
+            glfwSetFramebufferSizeCallback(handle, []([[maybe_unused]] GLFWwindow* window, const int width, const int height) {
                 glViewport(0, 0, width, height);
             });
 
             glfwMakeContextCurrent(handle);
             glfwSwapInterval(1); // Enable vsync
-#if !defined(__APPLE__)
-            set_window_icon();
-#endif
 
-            configure_imgui();
+            set_window_icon();
+
+            configure_imgui(glsl_version);
         }
 
         ~Window();
@@ -90,19 +89,18 @@ namespace todo_imgui {
         [[nodiscard]] float get_frame_rate() const;
         void add_key_callback(int key, int mods, int action, const KeyCallback& callback);
         void add_key_callback(int key, int action, const KeyCallback& callback);
-        WindowDimensions get_dimensions() const {
-            WindowDimensions dimensions;
+        [[nodiscard]] WindowDimensions get_dimensions() const {
+            WindowDimensions dimensions{};
             glfwGetFramebufferSize(handle, &dimensions.width, &dimensions.height);
             return dimensions;
         }
 
     private:
         GLFWwindow* handle;
-        const char* glsl_version;
         std::vector<KeyCallbackMapping> callbacks;
 
         const char* configure_window(bool resizable);
-        void configure_imgui() const;
+        void configure_imgui(const char *glsl_version) const;
         void set_window_icon() const;
         void key_callback(int key, int action, int mods) const;
     };

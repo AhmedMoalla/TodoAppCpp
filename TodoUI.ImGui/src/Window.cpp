@@ -102,7 +102,7 @@ const char* Window::configure_window(const bool resizable) {
     return glsl_version;
 }
 
-void Window::configure_imgui() const {
+void Window::configure_imgui(const char* glsl_version) const {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
@@ -134,6 +134,7 @@ void Window::configure_imgui() const {
 }
 
 void Window::set_window_icon() const {
+#if !defined(__APPLE__)
     int width, height, channels;
     const auto pixels = stbi_load_from_memory(checkmark_icon_png, checkmark_icon_png_len, &width, &height, &channels,
                                               4);
@@ -150,6 +151,7 @@ void Window::set_window_icon() const {
     glfwSetWindowIcon(handle, 1, &icon);
 
     stbi_image_free(icon.pixels);
+#endif
 }
 
 void Window::add_key_callback(int key, int mods, int action, const KeyCallback& callback) {

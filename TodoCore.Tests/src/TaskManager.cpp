@@ -155,6 +155,7 @@ TEST(TaskManager, should_emit_remove_event_after_removal) {
     task_manager.save("Task 1");
     const Task to_delete = task_manager.save("Task 2");
     task_manager.subscribe_to_changes([&](const TaskManagerChangeEvent& event) {
+        ASSERT_EQ("Task 2", event.task.title);
         ASSERT_EQ(1, task_manager.find_all().size());
     });
 

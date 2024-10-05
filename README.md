@@ -7,11 +7,11 @@ The code might be bad and the application overly complicated.
 
 # Miscellaneous Information
 
-| Key              | Value                               |
-|------------------|-------------------------------------|
-| Build System     | CMake                               |
-| C++ Version      | 23                                  |
-| Tested Compilers | MSVC 19.41.34120 (VS2022), GCC 14.2 |
+| Key              | Value                                                                                                                 |
+|------------------|-----------------------------------------------------------------------------------------------------------------------|
+| Build System     | CMake                                                                                                                 |
+| C++ Version      | 23                                                                                                                    |
+| Tested Compilers | - **Windows:** MSVC 19.41.34120 (VS2022)<br/>- **Linux:** GCC 14.2<br/>- **MacOS (ARM):** clang 15 (clang-1500.3.9.4) |
 
 # Project Structure
 The project is made of multiple subproject with different purposes:
@@ -36,11 +36,14 @@ Some flags can be set to customize the build. Here is a complete list:
 ## Build Instructions
 ### Windows
 ```shell
-cmake -S . -B build 
+cmake -S . -B build -DTodoUIMode:STRING=imgui
+# Will pick up your local Visual Studio installation and generate a solution in the build directory
+# Make files will be generated if no VS installation is found
 ```
 > You can also open the project in JetBrains's CLion
 
-### Linux
+### Linux & MacOS
 ```shell
-cmake -S . -B build 
+cmake -S . -B build -DTodoUIMode:STRING=imgui
+cd build && make
 ```

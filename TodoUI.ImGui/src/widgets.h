@@ -8,7 +8,7 @@
 #include <string_view>
 
 namespace todo_widgets {
-    static void menu_bar(const todo_imgui::Window& window) {
+    [[maybe_unused]] static void menu_bar(const todo_imgui::Window& window) {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 ImGui::Separator();
@@ -21,15 +21,15 @@ namespace todo_widgets {
         }
     }
 
-    static void debug_overlay(const todo_imgui::Window& window) {
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking |
-                                        ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings |
-                                        ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav |
-                                        ImGuiWindowFlags_NoMove;
-        const float PAD = 10.0f;
+    [[maybe_unused]] static void debug_overlay(const todo_imgui::Window& window) {
+        constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking |
+                                                  ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings |
+                                                  ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav |
+                                                  ImGuiWindowFlags_NoMove;
+        constexpr float PAD = 10.0f;
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImVec2 work_pos = viewport->WorkPos;
-        ImVec2 work_size = viewport->WorkSize;
+        const ImVec2 work_pos = viewport->WorkPos;
+        const ImVec2 work_size = viewport->WorkSize;
         ImVec2 window_pos, window_pos_pivot;
         window_pos.x = work_pos.x + work_size.x - PAD;
         window_pos.y = work_pos.y + PAD;
@@ -43,8 +43,8 @@ namespace todo_widgets {
             ImGui::Text("Debug Overlay");
             ImGui::Separator();
 
-            const auto window_size = window.get_dimensions();
-            ImGui::Text("Window Dimensions: (%d, %d)", window_size.width, window_size.height);
+            const auto [width, height] = window.get_dimensions();
+            ImGui::Text("Window Dimensions: (%d, %d)", width, height);
         }
         ImGui::End();
     }
@@ -136,7 +136,7 @@ namespace todo_widgets {
 
         bool ok_pressed = false;
         if (ImGui::BeginPopupModal(popup_id.data(), nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Text(text.data());
+            ImGui::Text("%s", text.data());
             ImGui::Separator();
 
             static bool dont_ask_me_next_time = false;
