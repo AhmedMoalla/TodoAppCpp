@@ -3,12 +3,13 @@
 #include "utils.h"
 
 namespace todo_repl {
-enum CommandType : std::uint8_t {
+enum class CommandType : std::uint8_t {
     Help, Exit, List, Complete, Remove, Create, Update, Unknown = std::numeric_limits<uint8_t>::max()
 };
 
 static CommandType parse_command_type(const std::string_view command) {
     const auto trimmed = todo_utils::string_trim(command);
+    using enum CommandType;
     if (trimmed == "help") return Help;
     if (trimmed == "exit") return Exit;
     if (trimmed == "list") return List;
@@ -25,7 +26,7 @@ struct Command {
     std::vector<std::string_view> split_command;
     std::vector<std::string_view> args;
 
-    Command() : type(Unknown) {}
+    Command() : type(CommandType::Unknown) {}
 
     explicit Command(std::string command) : raw_command(std::move(command)) {
         split_command = todo_utils::string_split(raw_command, ' ', true);

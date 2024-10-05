@@ -44,6 +44,7 @@ namespace {
 
 void ReplTodoUI::run() {
     Command command;
+    using enum CommandType;
     while ((command = next_command()).type != Exit) {
         switch (command.type) {
         case Help: print_help(); break;
