@@ -47,3 +47,8 @@ cmake -S . -B build -DTodoUIMode:STRING=imgui
 cmake -S . -B build -DTodoUIMode:STRING=imgui
 cd build && make
 ```
+
+### Running the tests
+```shell
+cd build/TodoCore.Tests && ctest
+```
