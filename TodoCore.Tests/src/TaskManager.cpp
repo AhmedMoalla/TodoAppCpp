@@ -1,7 +1,6 @@
 #include "TaskManager.h"
 
 #include <print>
-#include <magic_enum/magic_enum.hpp>
 
 #include "gtest/gtest.h"
 
@@ -130,12 +129,11 @@ TEST(TaskManager, should_emit_change_event_to_subscriber) {
 
     int counter[magic_enum::enum_count<TaskManagerChangeEventType>()] = {};
     std::string title = "test";
-    constexpr auto names = magic_enum::enum_names<TaskManagerChangeEventType>();
     task_manager.subscribe_to_changes([&](const TaskManagerChangeEvent& event) {
         std::println("Event of type: {} received for task '{}'",
-                    names[event.type] , event.task.title);
+                    change_event_names[static_cast<size_t>(event.type)] , event.task.title);
         ASSERT_EQ(title, event.task.title);
-        counter[event.type]++;
+        counter[static_cast<size_t>(event.type)]++;
     });
 
     Task created_task = task_manager.save(title);
@@ -144,9 +142,10 @@ TEST(TaskManager, should_emit_change_event_to_subscriber) {
     task_manager.remove(updated_task.id);
     task_manager.save(title = "Another title");
 
-    ASSERT_EQ(2, counter[Create]);
-    ASSERT_EQ(1, counter[Update]);
-    ASSERT_EQ(1, counter[Remove]);
+    using enum TaskManagerChangeEventType;
+    ASSERT_EQ(2, counter[static_cast<size_t>(Create)]);
+    ASSERT_EQ(1, counter[static_cast<size_t>(Update)]);
+    ASSERT_EQ(1, counter[static_cast<size_t>(Remove)]);
 }
 
 TEST(TaskManager, should_emit_remove_event_after_removal) {

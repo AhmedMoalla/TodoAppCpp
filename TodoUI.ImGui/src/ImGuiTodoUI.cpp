@@ -4,7 +4,6 @@
 
 #include <print>
 #include <Window.h>
-#include <magic_enum/magic_enum.hpp>
 
 using namespace todo;
 using namespace todo_imgui;
@@ -18,16 +17,16 @@ void display_ui(const TaskManager& task_manager) {
 }
 
 void ImGuiTodoUI::init() {
-    constexpr auto event_names = magic_enum::enum_names<TaskManagerChangeEventType>();
     task_manager.subscribe_to_changes([&](const TaskManagerChangeEvent& event) {
-        std::println("Event of type '{}' was received for task '{}'", event_names[event.type], event.task.title);
+        std::println("Event of type '{}' was received for task '{}'", change_event_names[static_cast<size_t>(event.type)], event.task.title);
+        using enum TaskManagerChangeEventType;
         switch (event.type) {
             case Create: state.tasks.emplace_back(event.task);
                 break;
             case Update:
             case Remove: {
                 state.tasks.clear();
-                for (auto task: task_manager.find_all()) {
+                for (const auto& task: task_manager.find_all()) {
                     state.tasks.emplace_back(task);
                 }
                 break;

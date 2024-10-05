@@ -4,6 +4,7 @@
 #include <optional>
 #include <map>
 #include <ranges>
+#include <magic_enum/magic_enum.hpp>
 
 namespace todo {
     static constexpr int unsaved_id = -1;
@@ -18,9 +19,11 @@ namespace todo {
         auto operator<=>(const Task&) const = default;
     };
 
-    enum TaskManagerChangeEventType: char {
+    enum class TaskManagerChangeEventType: std::uint8_t {
         Create, Update, Remove
     };
+
+    static constexpr auto change_event_names = magic_enum::enum_names<TaskManagerChangeEventType>();
 
     struct TaskManagerChangeEvent {
         const TaskManagerChangeEventType type;
