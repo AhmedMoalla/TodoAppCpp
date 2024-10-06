@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.30)
 
-include(CompilerFlags.cmake)
 project(TodoApp VERSION 1.0 LANGUAGES CXX)
+
+# Must be included after project so we can use CMAKE_CXX_COMPILER_ID and others...
+include(CompilerFlags.cmake)
 
 # Define the TodoApp executable
 add_executable(TodoApp main.cpp)

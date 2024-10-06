@@ -14,6 +14,10 @@ FetchContent_MakeAvailable(googletest)
 file(GLOB SRC_FILES src/*.cpp)
 add_executable(TodoCore.Tests ${SRC_FILES})
 
+target_link_libraries(gmock PRIVATE TodoAppCompilerFlags)
+target_link_libraries(gmock_main PRIVATE TodoAppCompilerFlags)
+target_link_libraries(gtest PRIVATE TodoAppCompilerFlags)
+target_link_libraries(gtest_main PRIVATE TodoAppCompilerFlags)
 target_link_libraries(TodoCore.Tests PRIVATE TodoAppCompilerFlags TodoCore gtest gtest_main)
 
 # Enables running tests using ctest
