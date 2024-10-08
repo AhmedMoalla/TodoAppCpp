@@ -12,15 +12,15 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 file(GLOB SRC_FILES src/*.cpp)
-add_executable(TodoCore.Tests ${SRC_FILES})
+add_executable(Tasks.Tests ${SRC_FILES})
 
-target_link_libraries(gmock PRIVATE TodoAppCompilerFlags)
-target_link_libraries(gmock_main PRIVATE TodoAppCompilerFlags)
-target_link_libraries(gtest PRIVATE TodoAppCompilerFlags)
-target_link_libraries(gtest_main PRIVATE TodoAppCompilerFlags)
-target_link_libraries(TodoCore.Tests PRIVATE TodoAppCompilerFlags TodoCore gtest gtest_main)
+target_link_libraries(gmock PRIVATE Tasks.CompilerFlags)
+target_link_libraries(gmock_main PRIVATE Tasks.CompilerFlags)
+target_link_libraries(gtest PRIVATE Tasks.CompilerFlags)
+target_link_libraries(gtest_main PRIVATE Tasks.CompilerFlags)
+target_link_libraries(Tasks.Tests PRIVATE Tasks.CompilerFlags Tasks.Core gtest gtest_main)
 
 # Enables running tests using ctest
 enable_testing()
 include(GoogleTest)
-gtest_discover_tests(TodoCore.Tests)
+gtest_discover_tests(Tasks.Tests)

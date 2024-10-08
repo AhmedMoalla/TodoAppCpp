@@ -9,9 +9,9 @@
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
 
-namespace todo_imgui {
+namespace tasks_imgui {
 
-    struct UITaskState : todo::Task {
+    struct UITaskState : tasks::Task {
         bool edit_mode = false;
         UITaskState(const Task& task): Task(task) {}
     };
@@ -23,11 +23,11 @@ namespace todo_imgui {
         std::string edit_task_title;
     };
 
-    class ImGuiTodoUI {
+    class ImGuiTasksUI {
     public:
         UIState state;
 
-        explicit ImGuiTodoUI(todo::TaskManager task_manager, const WindowSpecification& spec) : task_manager(
+        explicit ImGuiTasksUI(tasks::TaskManager task_manager, const WindowSpecification& spec) : task_manager(
                 std::move(task_manager)), window(Window(spec)) {}
 
         void run() {
@@ -54,7 +54,7 @@ namespace todo_imgui {
         }
 
     private:
-        todo::TaskManager task_manager;
+        tasks::TaskManager task_manager;
         Window window;
 
         void init();

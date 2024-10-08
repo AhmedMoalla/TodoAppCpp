@@ -1,13 +1,13 @@
-﻿#include "ReplTodoUI.h"
+﻿#include "ReplTasksUI.h"
 
 #include <format>
 #include <iostream>
 
-using namespace todo;
-using namespace todo_repl;
+using namespace tasks;
+using namespace tasks_repl;
 
 void display_ui(const TaskManager& task_manager) {
-    ReplTodoUI ui(task_manager);
+    ReplTasksUI ui(task_manager);
     ui.run();
 }
 
@@ -42,7 +42,7 @@ namespace {
     }
 }
 
-void ReplTodoUI::run() {
+void ReplTasksUI::run() {
     Command command;
     using enum CommandType;
     while ((command = next_command()).type != Exit) {
@@ -59,7 +59,7 @@ void ReplTodoUI::run() {
     }
 }
 
-void ReplTodoUI::create_task(const std::vector<std::string_view>& args) {
+void ReplTasksUI::create_task(const std::vector<std::string_view>& args) {
     if (args.size() != 1) {
         std::cout << R"(Invalid number of arguments. Usage: create "task title")" << ".\n";
         return;
@@ -69,7 +69,7 @@ void ReplTodoUI::create_task(const std::vector<std::string_view>& args) {
     std::cout << std::format("Task '{}' (id={}) created successfully.\n", new_task.title, new_task.id);
 }
 
-void ReplTodoUI::update_task(const std::vector<std::string_view>& args) {
+void ReplTasksUI::update_task(const std::vector<std::string_view>& args) {
     if (args.size() != 2) {
         std::cout << "Invalid number of arguments. Usage: update <task-id> <new-title>.\n";
         return;
@@ -83,7 +83,7 @@ void ReplTodoUI::update_task(const std::vector<std::string_view>& args) {
     }
 }
 
-void ReplTodoUI::list_tasks() const {
+void ReplTasksUI::list_tasks() const {
     const auto tasks = task_manager.find_all();
     if (tasks.empty()) {
         std::cout << "No Tasks found.\n";
@@ -94,7 +94,7 @@ void ReplTodoUI::list_tasks() const {
     }
 }
 
-void ReplTodoUI::complete_task(const std::vector<std::string_view>& args) {
+void ReplTasksUI::complete_task(const std::vector<std::string_view>& args) {
     if (args.size() != 1) {
         std::cout << "Invalid number of arguments. Usage: complete <task-id>.\n";
         return;
@@ -106,7 +106,7 @@ void ReplTodoUI::complete_task(const std::vector<std::string_view>& args) {
     }
 }
 
-void ReplTodoUI::remove_task(const std::vector<std::string_view>& args) {
+void ReplTasksUI::remove_task(const std::vector<std::string_view>& args) {
     if (args.size() != 1) {
         std::cout << "Invalid number of arguments. Usage: remove <task-id>.\n";
         return;

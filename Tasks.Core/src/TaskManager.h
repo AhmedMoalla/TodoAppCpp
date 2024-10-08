@@ -6,7 +6,7 @@
 #include <ranges>
 #include <magic_enum/magic_enum.hpp>
 
-namespace todo {
+namespace tasks {
     static constexpr int unsaved_id = -1;
 
     struct Task {

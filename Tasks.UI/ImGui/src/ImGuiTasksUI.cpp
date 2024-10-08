@@ -1,22 +1,22 @@
-#include "ImGuiTodoUI.h"
+#include "ImGuiTasksUI.h"
 #include "widgets.h"
 #include "imgui.h"
 
 #include <print>
 #include <Window.h>
 
-using namespace todo;
-using namespace todo_imgui;
+using namespace tasks;
+using namespace tasks_imgui;
 
 void display_ui(const TaskManager& task_manager) {
     constexpr WindowDimensions dimensions = {.width = 350, .height = 550};
-    constexpr WindowSpecification spec = {.dimensions = dimensions, .title = "TodoApp", .resizable = false};
-    ImGuiTodoUI ui(task_manager, spec);
+    constexpr WindowSpecification spec = {.dimensions = dimensions, .title = "TasksApp", .resizable = false};
+    ImGuiTasksUI ui(task_manager, spec);
 
     ui.run();
 }
 
-void ImGuiTodoUI::init() {
+void ImGuiTasksUI::init() {
     task_manager.subscribe_to_changes([&](const TaskManagerChangeEvent& event) {
         std::println("Event of type '{}' was received for task '{}'", change_event_names[static_cast<size_t>(event.type)], event.task.title);
         using enum TaskManagerChangeEventType;
@@ -43,14 +43,14 @@ void ImGuiTodoUI::init() {
     });
 }
 
-void ImGuiTodoUI::render_ui() {
+void ImGuiTasksUI::render_ui() {
     if (state.show_demo_window) {
         ImGui::ShowDemoWindow(nullptr);
     }
 
     for (auto& task: state.tasks) {
         const auto [checkbox_pressed, x_pressed, save_pressed, edit_mode_entered] =
-            todo_widgets::task_checkbox(task.id, task.title, task.completed, task.edit_mode, &state.edit_task_title);
+            tasks_widgets::task_checkbox(task.id, task.title, task.completed, task.edit_mode, &state.edit_task_title);
 
         if (edit_mode_entered) {
             state.edit_task_title = task.title;
@@ -81,12 +81,12 @@ void ImGuiTodoUI::render_ui() {
             task_manager.toggle_complete(task.id);
         }
 
-        if (todo_widgets::delete_confirm_popup(x_pressed, task)) {
+        if (tasks_widgets::delete_confirm_popup(x_pressed, task)) {
             task_manager.remove(task.id);
         }
     }
 
-    if (todo_widgets::creation_input(&state.create_task_title) && !state.create_task_title.empty()) {
+    if (tasks_widgets::creation_input(&state.create_task_title) && !state.create_task_title.empty()) {
         task_manager.save(state.create_task_title);
         state.create_task_title.clear();
     }
