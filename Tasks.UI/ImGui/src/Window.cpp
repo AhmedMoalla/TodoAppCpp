@@ -4,9 +4,11 @@
 #include <stb_image.h>
 
 #include "Window.h"
+#if !defined(__APPLE__)
 #include "checkmark_icon.h"
+#endif
 
-using namespace todo_imgui;
+using namespace tasks_imgui;
 
 Window::~Window() {
     // Cleanup

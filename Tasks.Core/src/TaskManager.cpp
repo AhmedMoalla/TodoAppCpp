@@ -2,7 +2,7 @@
 
 #include "TaskManager.h"
 
-using namespace todo;
+using namespace tasks;
 
 Task TaskManager::save(Task task) {
     if (const auto found = tasks.find(task.id); found != tasks.end()) {

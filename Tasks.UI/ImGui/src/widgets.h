@@ -7,8 +7,8 @@
 #include <magic_enum/magic_enum.hpp>
 #include <string_view>
 
-namespace todo_widgets {
-    [[maybe_unused]] static void menu_bar(const todo_imgui::Window& window) {
+namespace tasks_widgets {
+    [[maybe_unused]] static void menu_bar(const tasks_imgui::Window& window) {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 ImGui::Separator();
@@ -21,7 +21,7 @@ namespace todo_widgets {
         }
     }
 
-    [[maybe_unused]] static void debug_overlay(const todo_imgui::Window& window) {
+    [[maybe_unused]] static void debug_overlay(const tasks_imgui::Window& window) {
         constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking |
                                                   ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings |
                                                   ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav |
@@ -159,7 +159,7 @@ namespace todo_widgets {
         return ok_pressed;
     }
 
-    static bool delete_confirm_popup(const bool open, const todo::Task& task) {
+    static bool delete_confirm_popup(const bool open, const tasks::Task& task) {
         const std::string popup_id = std::format("Delete?##{}", std::to_string(task.id));
         if (open) {
             set_popup_open(popup_id);

@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 
-using namespace todo;
+using namespace tasks;
 
 TEST(Task, should_be_uncompleted_at_initialization) {
     const Task task("title");

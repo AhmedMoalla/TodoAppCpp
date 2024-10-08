@@ -17,10 +17,11 @@ The code might be bad and the application overly complicated.
 The project is made of multiple subproject with different purposes:
 ```text
 ├── CMakeLists.txt <-- Root CMake file
-├── TodoCore <-- Library containing the API for the core logic
-├── TodoCore.Tests <-- Google Tests project to test the TodoCore project
-├── TodoUI.ImGui <-- GUI made with ImGUI 
-├── TodoUI.Repl <-- REPL UI
+├── Tasks.Core <-- Library containing the API for the core logic
+├── Tasks.Tests <-- Google Tests project
+├── Tasks.UI
+│         ├── ImGui <-- GUI with ImGUI
+│         └── Repl  <-- REPL UI
 └── main.cpp <-- main() entry point
 ```
 
@@ -28,15 +29,15 @@ The project is made of multiple subproject with different purposes:
 
 Some flags can be set to customize the build. Here is a complete list:
 
-| Name       | Possible Values | Description                                                                             |
-|------------|-----------------|-----------------------------------------------------------------------------------------|
-| TodoUIMode | repl, imgui     | Used to link with either [TodoUI.Repl](./TodoUI.Repl) or [TodoUI.ImGui](./TodoUI.ImGui) |
+| Name          | Possible Values | Description                                                                                     |
+|---------------|-----------------|-------------------------------------------------------------------------------------------------|
+| Tasks.UI.Mode | repl, imgui     | Used to link with either [Tasks.UI.Repl](./Tasks.UI/Repl) or [Tasks.UI.ImGui](./Tasks.UI/ImGui) |
 
 
 ## Build Instructions
 ### Windows
 ```shell
-cmake -S . -B build -DTodoUIMode:STRING=imgui
+cmake -S . -B build -DTasks.UI.Mode:STRING=imgui
 # Will pick up your local Visual Studio installation and generate a solution in the build directory
 # Make files will be generated if no VS installation is found
 ```
@@ -44,11 +45,11 @@ cmake -S . -B build -DTodoUIMode:STRING=imgui
 
 ### Linux & MacOS
 ```shell
-cmake -S . -B build -DTodoUIMode:STRING=imgui
+cmake -S . -B build -DTasks.UI.Mode:STRING=imgui
 cd build && make
 ```
 
 ### Running the tests
 ```shell
-cd build/TodoCore.Tests && ctest
+cd build/Tasks.Tests && ctest
 ```

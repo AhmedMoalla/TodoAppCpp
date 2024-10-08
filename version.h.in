@@ -1,4 +1,4 @@
 #pragma once
 // the configured options and settings for Tutorial
-#define VERSION_MAJOR @TodoApp_VERSION_MAJOR@
-#define VERSION_MINOR @TodoApp_VERSION_MINOR@
+#define VERSION_MAJOR @TasksApp_VERSION_MAJOR@
+#define VERSION_MINOR @TasksApp_VERSION_MINOR@

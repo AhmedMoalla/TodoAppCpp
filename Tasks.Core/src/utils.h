@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 
-namespace todo_utils {
+namespace tasks_utils {
 inline std::vector<std::string_view> string_split(const std::string_view str, const char delimiter, const bool ignore_string_in_quotes = false) {
     std::vector<std::string_view> result;
     size_t start = 0;
