@@ -22,15 +22,17 @@ add_subdirectory(Tasks.Tests)
 if (Tasks.UI.Mode STREQUAL ${Tasks.UI.Mode.Repl})
     add_subdirectory(Tasks.UI/Repl)
     target_link_libraries(TasksApp PRIVATE Tasks.UI.Repl)
+    target_compile_definitions(TasksApp PRIVATE TASKS_UI_MODE_REPL)
 elseif (Tasks.UI.Mode STREQUAL ${Tasks.UI.Mode.ImGui})
     add_subdirectory(Tasks.UI/ImGui)
     target_link_libraries(TasksApp PRIVATE Tasks.UI.ImGui)
+    target_compile_definitions(TasksApp PRIVATE TASKS_UI_MODE_IMGUI)
 endif ()
 
 # Link libraries
 target_link_libraries(TasksApp PRIVATE Tasks.CompilerFlags Tasks.Core)
 
-# Generate version.h which has the version of the project
-configure_file(version.h.in version.h)
-# Add the binary output dir as include directory because that's were the generated version.h will be
-target_include_directories(TasksApp PRIVATE "${PROJECT_BINARY_DIR}")
+# Expose app version as a definition
+target_compile_definitions(TasksApp PRIVATE
+        VERSION_MAJOR=${TasksApp_VERSION_MAJOR}
+        VERSION_MINOR=${TasksApp_VERSION_MINOR})
