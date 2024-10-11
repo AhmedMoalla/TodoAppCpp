@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.24)
 
 project(TasksApp VERSION 1.0 LANGUAGES CXX)
 
@@ -34,5 +34,4 @@ target_link_libraries(TasksApp PRIVATE Tasks.CompilerFlags Tasks.Core)
 
 # Expose app version as a definition
 target_compile_definitions(TasksApp PRIVATE
-        VERSION_MAJOR=${TasksApp_VERSION_MAJOR}
-        VERSION_MINOR=${TasksApp_VERSION_MINOR})
+        TASKS_VERSION=${TasksApp_VERSION_MAJOR}.${TasksApp_VERSION_MINOR})

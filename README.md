@@ -9,7 +9,7 @@ The code might be bad and the application overly complicated.
 
 | Key              | Value                                                                                                                 |
 |------------------|-----------------------------------------------------------------------------------------------------------------------|
-| Build System     | CMake                                                                                                                 |
+| Build System     | CMake 3.24                                                                                                            |
 | C++ Version      | 23                                                                                                                    |
 | Tested Compilers | - **Windows:** MSVC 19.41.34120 (VS2022)<br/>- **Linux:** GCC 14.2<br/>- **MacOS (ARM):** clang 15 (clang-1500.3.9.4) |
 
@@ -20,8 +20,8 @@ The project is made of multiple subproject with different purposes:
 ├── Tasks.Core <-- Library containing the API for the core logic
 ├── Tasks.Tests <-- Google Tests project
 ├── Tasks.UI
-│         ├── ImGui <-- GUI with ImGUI
-│         └── Repl  <-- REPL UI
+│   ├── ImGui <-- GUI with ImGUI
+│   └── Repl  <-- REPL UI
 └── main.cpp <-- main() entry point
 ```
 
