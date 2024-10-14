@@ -47,7 +47,7 @@ add_library(imgui
 target_compile_definitions(imgui INTERFACE GL_SILENCE_DEPRECATION)
 
 # Link with OpenGL and glfw
-target_link_libraries(imgui PRIVATE Tasks.CompilerFlags glfw OpenGL::GL)
+target_link_libraries(imgui INTERFACE Tasks.CompilerFlags glfw OpenGL::GL)
 
 # Include dirs
 target_include_directories(imgui

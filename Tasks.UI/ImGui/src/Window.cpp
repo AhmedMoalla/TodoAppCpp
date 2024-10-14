@@ -8,7 +8,7 @@
 #include "checkmark_icon.h"
 #endif
 
-using namespace tasks_imgui;
+using namespace tasks_ui;
 
 Window::~Window() {
     // Cleanup

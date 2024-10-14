@@ -4,12 +4,7 @@
 #include <iostream>
 
 using namespace tasks;
-using namespace tasks_repl;
-
-void display_ui(const TaskManager& task_manager) {
-    ReplTasksUI ui(task_manager);
-    ui.run();
-}
+using namespace tasks_ui;
 
 namespace {
     Command next_command() {
@@ -42,7 +37,7 @@ namespace {
     }
 }
 
-void ReplTasksUI::run() {
+void ReplTasksUI::display() {
     Command command;
     using enum CommandType;
     while ((command = next_command()).type != Exit) {

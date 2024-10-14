@@ -6,4 +6,4 @@ add_library(Tasks.UI.Repl ${SRC_FILES})
 target_include_directories(Tasks.UI.Repl INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Link libraries
-target_link_libraries(Tasks.UI.Repl PRIVATE Tasks.CompilerFlags Tasks.Core)
+target_link_libraries(Tasks.UI.Repl PRIVATE Tasks.CompilerFlags Tasks.Core Tasks.UI.Common)

@@ -8,7 +8,7 @@
 #include <functional>
 #include <imgui.h>
 
-namespace tasks_imgui {
+namespace tasks_ui {
     struct WindowDimensions {
         int width;
         int height;

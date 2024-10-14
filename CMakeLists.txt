@@ -16,7 +16,3 @@ add_subdirectory(Tasks.Tests)
 
 # Link libraries
 target_link_libraries(Tasks PRIVATE Tasks.CompilerFlags Tasks.App)
-
-# Expose app version as a definition
-target_compile_definitions(Tasks PUBLIC
-        TASKS_VERSION="${Tasks_VERSION_MAJOR}.${Tasks_VERSION_MINOR}")

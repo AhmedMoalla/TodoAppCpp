@@ -16,3 +16,7 @@ set(apple_stdlib_location "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/u
 if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 16)
     target_include_directories(Tasks.CompilerFlags INTERFACE ${apple_stdlib_location})
 endif()
+
+# Expose app version as a definition
+target_compile_definitions(Tasks.CompilerFlags INTERFACE
+        TASKS_VERSION="${Tasks_VERSION_MAJOR}.${Tasks_VERSION_MINOR}")

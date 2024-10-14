@@ -1,5 +1,3 @@
-#include <print>
-
 #include "TasksApp.h"
 
 // App should have command line args to specify in which mode should the app start
@@ -19,8 +17,7 @@
 // if all required args are given.
 
 int main(const int argc, const char* argv[]) {
-    std::println("Starting up TasksApp v{} in '{}' mode", TASKS_VERSION, TASKS_UI_MODE);
     const auto spec = tasks::AppSpecification::from_args(argc, argv);
-    tasks::TasksApp app(spec);
+    const tasks::TasksApp app(spec);
     app.run();
 }

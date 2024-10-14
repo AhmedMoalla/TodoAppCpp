@@ -1,5 +1,6 @@
 #pragma once
 
+#include <TasksUI.h>
 #include <Window.h>
 
 #include "TaskManager.h"
@@ -9,11 +10,10 @@
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
 
-namespace tasks_imgui {
-
+namespace tasks_ui {
     struct UITaskState : tasks::Task {
         bool edit_mode = false;
-        UITaskState(const Task& task): Task(task) {}
+        explicit UITaskState(const Task& task): Task(task) {}
     };
 
     struct UIState {
@@ -23,38 +23,37 @@ namespace tasks_imgui {
         std::string edit_task_title;
     };
 
-    class ImGuiTasksUI {
+    class ImGuiTasksUI final : public TasksUI {
     public:
         UIState state;
 
-        explicit ImGuiTasksUI(tasks::TaskManager task_manager, const WindowSpecification& spec) : task_manager(
-                std::move(task_manager)), window(Window(spec)) {}
+        explicit ImGuiTasksUI(tasks::TaskManager& task_manager,
+                              const WindowSpecification& spec) : TasksUI(task_manager), window(Window(spec)) {}
 
-        void run() {
+        void display() override {
             init();
 #ifdef __EMSCRIPTEN__
             // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
             // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
             io.IniFilename = nullptr;
             EMSCRIPTEN_MAINLOOP_BEGIN
-        #else
-                while (!window.should_close()) {
+#else
+            while (!window.should_close()) {
 #endif
-                    if (window.poll_events()) continue;
+                if (window.poll_events()) continue;
 
-                    window.begin_imgui_frame();
-                    begin_imgui_window();
-                    render_ui();
-                    end_imgui_window();
-                    window.end_imgui_frame();
-                }
+                window.begin_imgui_frame();
+                begin_imgui_window();
+                render_ui();
+                end_imgui_window();
+                window.end_imgui_frame();
+            }
 #ifdef __EMSCRIPTEN__
             EMSCRIPTEN_MAINLOOP_END;
 #endif
         }
 
     private:
-        tasks::TaskManager task_manager;
         Window window;
 
         void init();

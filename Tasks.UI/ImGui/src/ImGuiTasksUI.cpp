@@ -6,15 +6,7 @@
 #include <Window.h>
 
 using namespace tasks;
-using namespace tasks_imgui;
-
-void display_ui(const TaskManager& task_manager) {
-    constexpr WindowDimensions dimensions = {.width = 350, .height = 550};
-    constexpr WindowSpecification spec = {.dimensions = dimensions, .title = "TasksApp", .resizable = false};
-    ImGuiTasksUI ui(task_manager, spec);
-
-    ui.run();
-}
+using namespace tasks_ui;
 
 void ImGuiTasksUI::init() {
     task_manager.subscribe_to_changes([&](const TaskManagerChangeEvent& event) {
